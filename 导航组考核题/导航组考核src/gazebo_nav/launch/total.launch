@@ -1,0 +1,7 @@
+<launch>
+    <include file="$(find gazebo_pkg)/launch/race.launch"/>
+    <include file="$(find racecar_control)/launch/racecar_control.launch"/>
+    <include file="$(find gazebo_nav)/launch/racecar_nav.launch"/>
+    <include file="$(find gazebo_nav)/cfg/amcl/amcl.launch"/>
+    <!-- <node pkg="gazebo_nav" type="racecarClient" name="racecarClient" output="screen" /> -->
+</launch>

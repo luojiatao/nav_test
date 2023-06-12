@@ -1,0 +1,43 @@
+
+<launch>
+    <!-- these are the arguments you can pass this launch file, for example
+    paused:=true -->
+    <arg name="paused" default="true"/>
+    <arg name="use_sim_time" default="true"/>
+    <arg name="gui" default="true"/>
+    <arg name="headless" default="false"/>
+    <arg name="debug" default="false"/>
+    <!-- <remap from="robot/laser/scan" to="/scan"/> -->
+    <!--模型车的起点放置位置-->
+    <arg name="x_pos" default="0.18"/>
+    <arg name="y_pos" default="0.0"/>
+    <arg name="z_pos" default="0.0"/>
+    <arg name="R_pos" default="0.0"/>
+    <arg name="P_pos" default="0.0"/>
+    <arg name="Y_pos" default="3.1416"/>
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(find gazebo_pkg)/world/map_model.world"/>
+        <arg name="debug" value="$(arg debug)" />
+        <arg name="gui" value="$(arg gui)" />
+    </include>
+    <!-- Load the URDF into the ROS Parameter Server -->
+    <arg name="model" default="$(find gazebo_pkg)/urdf/racecar.xacro" />
+    <param name="robot_description" command="$(find xacro)/xacro --inorder $(arg
+    model)" />
+    <!-- Run a python script to send a service call the gazebo_ros to spawn a URDF
+    robot -->
+    <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false"
+    output="screen"
+    args="-urdf -model racecar -param robot_description -x $(arg x_pos) -y $(arg
+    y_pos) -z $(arg z_pos) -R $(arg R_pos) -P $(arg P_pos) -Y $(arg Y_pos)"/>
+    <!-- ros_control racecar launch file -->
+    <!--<include file="$(find racecar_control)/launch/racecar_control.launch"
+    ns="/"/>-->
+    <!--Launch the simulation joystick control -->
+    <!--<rosparam command="load" file="$(find
+    racecar_control)/config/keyboard_teleop.yaml" />
+    <node pkg="racecar_control" type="keyboard_teleop.py" name="keyboard_teleop"
+    /> -->
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+</launch>
